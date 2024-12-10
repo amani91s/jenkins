@@ -17,13 +17,13 @@ pipeline {
         stage('Provision Server and Database') {
             steps {
                 script {
-                    dir('terraform/remote_backend') {
+                    dir('myterraform/remote_backend') {
                         sh "terraform init"
                         // Apply Terraform configuration
                         sh "terraform apply --auto-approve"
                     }
 
-                    dir('terraform') {
+                    dir('myterraform') {
                         // Initialize Terraform
                         sh "terraform init"
                         sh "terraform plan -lock=false"
