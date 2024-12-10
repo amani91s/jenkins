@@ -1,10 +1,11 @@
-import axios from "axios";
-import { ACCESS_TOKEN } from "./constants";
 
+import axios from "axios";
+import { API_BASE_URL } from "./config"; // Importing API_BASE_URL dynamically
+import { ACCESS_TOKEN } from "./constants"; // Importing ACCESS_TOKEN
 const apiUrl = "http";
 
 const api = axios.create({
-  baseURL: "http://3.238.0.147:8000"
+  baseURL: API_BASE_URL, // Using the dynamic API_BASE_URL
 });
 
 api.interceptors.request.use(
