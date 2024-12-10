@@ -1,11 +1,12 @@
 terraform {
     backend "s3" {
- bucket= "custom-terraform-state-bucket-123456-c39629bd"
+ bucket= "custom-terraform-state-bucket-123456-a3170391"
  key = "aws-backend/terraform.tfstate" # Location of the state file in the bucket
  region = "us-east-1" # AWS region
  dynamodb_table =  "custom-terraform-state-locks-123456" 
  encrypt = true 
  }  
+
 
   required_providers {
     aws = {
