@@ -17,7 +17,7 @@ pipeline {
         stage('Provision Server and Database') {
             steps {
                 script {
-                    dir('myterraform/remote_backend') {
+                    dir('myterraform/remote-backend') {
                         sh "terraform init"
                         // Apply Terraform configuration
                         sh "terraform apply --auto-approve"
