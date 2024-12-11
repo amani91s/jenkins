@@ -22,7 +22,7 @@ pipeline {
 
                         sh "terraform init"
                         // Apply Terraform configuration
-                        sh "terraform apply --auto-approve"
+                        sh "terraform apply -lock=false --auto-approve"
                     }
 
                     dir('myterraform') {
