@@ -21,14 +21,14 @@ pipeline {
                     dir('myterraform/remote-backend') {
                         sh "ls -la"
 
-                        sh "terraform init -lock=false -migrate-state  -reconfigure"
+                        sh "terraform init -lock=false -migrate-state  "
                         // Apply Terraform configuration
                         sh "terraform apply -lock=false --auto-approve"
                     }
 
                     dir('myterraform') {
                         // Initialize Terraform
-                        sh "terraform init -lock=false -migrate-state -reconfigure"
+                        sh "terraform init -lock=false -migrate-state "
                         sh "terraform plan -lock=false"
 
                         // Apply Terraform configuration
