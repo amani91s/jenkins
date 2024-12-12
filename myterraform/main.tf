@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket         = "custom-terraform-state-bucket-123456-7c47a3e0"
+    bucket         = "custom-terraform-state-bucket-123456-9d13102d"
     key            = "terraform-project/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "custom-terraform-state-locks-123456"
@@ -99,7 +99,7 @@ resource "aws_key_pair" "deployer_key" {
 }
 
 resource "aws_s3_bucket_object" "private_key_object" {
-  bucket                 = "custom-terraform-state-bucket-123456-7c47a3e0"
+  bucket                 = "custom-terraform-state-bucket-123456-9d13102d"
   key                    = "${var.ssh_key_name}.pem"
   content                = tls_private_key.example_ssh_key.private_key_pem
   acl                    = "private"
