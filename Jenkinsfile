@@ -1,3 +1,7 @@
+def EC2_PUBLIC_IP = ""
+def RDS_ENDPOINT = ""
+def DEPLOYER_KEY_URI = ""
+
 pipeline {
     agent any
     environment {
@@ -13,42 +17,46 @@ pipeline {
         stage('Provision Server and Database') {
             steps {
                 script {
+
                     dir('myterraform/remote-backend') {
                         sh "ls -la"
-                        sh "terraform init -lock=false -reconfigure"
-                        sh "terraform validate"  // Validating the Terraform configuration
+
+                        sh "terraform init -lock=false -migrate-state  -reconfigure"
+                        // Apply Terraform configuration
                         sh "terraform apply -lock=false --auto-approve"
                     }
 
                     dir('myterraform') {
-                        sh "terraform init -lock=false -reconfigure"
+                        // Initialize Terraform
+                        sh "terraform init -lock=false -migrate-state -reconfigure"
                         sh "terraform plan -lock=false"
+
+                        // Apply Terraform configuration
                         sh "terraform apply -lock=false --auto-approve"
 
                         // Get EC2 Public IP
-                        EC2_PUBLIC_IP = sh(script: '''
-                            terraform output instance_details | grep "instance_public_ip" | awk '{print $3}' | tr -d '"'
-                        ''', returnStdout: true).trim()
-                        
-                        // Ensure the value is not empty
-                        if (!EC2_PUBLIC_IP) {
-                            error "EC2 Public IP is empty, exiting."
-                        }
+                        EC2_PUBLIC_IP = sh(
+                            script: '''
+                                terraform output instance_details | grep "instance_public_ip" | awk '{print $3}' | tr -d '"'
+                            ''',
+                            returnStdout: true
+                        ).trim()
 
                         // Get RDS Endpoint
-                        RDS_ENDPOINT = sh(script: '''
-                            terraform output rds_endpoint | grep "endpoint" | awk -F'=' '{print $2}' | tr -d '[:space:]"' | sed 's/:3306//'
-                        ''', returnStdout: true).trim()
-
-                        // Ensure the value is not empty
-                        if (!RDS_ENDPOINT) {
-                            error "RDS Endpoint is empty, exiting."
-                        }
+                        RDS_ENDPOINT = sh(
+                            script: '''
+                                terraform output rds_endpoint | grep "endpoint" | awk -F'=' '{print $2}' | tr -d '[:space:]"' | sed 's/:3306//'
+                            ''',
+                            returnStdout: true
+                        ).trim()
 
                         // Get Deployer Key URI
-                        DEPLOYER_KEY_URI = sh(script: '''
-                            terraform output deployer_key_s3_uri | tr -d '"'
-                        ''', returnStdout: true).trim()
+                        DEPLOYER_KEY_URI = sh(
+                            script: '''
+                                terraform output deployer_key_s3_uri | tr -d '"'
+                            ''',
+                            returnStdout: true
+                        ).trim()
 
                         // Debugging: Print captured values
                         echo "EC2 Public IP: ${EC2_PUBLIC_IP}"
@@ -85,7 +93,7 @@ pipeline {
                             if [ -f "settings.py" ]; then
                                 echo "Found settings.py at $(pwd)"
                             else
-                                echo "settings.py not found in $(pwd)! Exiting."
+                                echo "settings.py not found in $(pwd)!"
                                 exit 1
                             fi
                         '''
